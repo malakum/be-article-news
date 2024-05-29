@@ -59,7 +59,7 @@ describe("/api/article/:article_id", () => {
             author: 'butter_bridge',
             title: 'Living in the shadow of a great man',
             article_id: 1,
-           // body:  'I find this existence challenging',
+            body:  'I find this existence challenging',
             topic: 'mitch',
             created_at: '2020-07-09T20:11:00.000Z',
              votes: 100,
@@ -89,5 +89,51 @@ describe("/api/article/:article_id", () => {
          expect(msg).toBe("Not Found");
       
       });
+  });
+});
+describe("/api/articles", () => {
+  test("GET:200 sends an array of articles to the client", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+          expect(articles.rows).toHaveLength(13);
+             articles.rows.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+             votes: expect.any(Number),
+             article_img_url :expect.any(String),
+             comment_count : expect.any(String),
+        });
+      });
+  });
+  });
+  test("GET:200 sends an array of articles in descending order by date to the client", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+     
+        expect(articles.rows).toHaveLength(13);
+       expect(articles.rows).toBeSortedBy("created_at",{ descending: true });
+
+  });
+  });
+  test("GET:400 Bad Requests- response with an error message for an invalid sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by= apple")
+      .expect(400)
+      .then(({ body }) => {
+      
+        const { msg } = body;
+            expect(msg).toBe("Bad Request");
+     
+  });
   });
 });
