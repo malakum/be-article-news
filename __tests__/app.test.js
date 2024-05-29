@@ -6,6 +6,8 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const app = require("../app");
 const request = require("supertest");
+const allApiDataOutput = require("../endpoints.json");
+
 
 
 beforeEach(() => seed({ topicData, articleData, userData, commentData }));
@@ -26,6 +28,20 @@ describe("/api/topics", () => {
             description: expect.any(String),
             });
         });
+      });
+  });
+});
+
+describe("/api", () => {
+  const output = allApiDataOutput;
+  
+  test("GET:200 sends an array of all api to the client", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { allApi } = body;
+        expect (allApi).toEqual(output);
       });
   });
 });
