@@ -10,6 +10,7 @@ const { getArticleById, getArticles,patchArticleByArticleId} = require("./contro
 
 const { getCommentsByArticleId, postCommentsByArticleId, deleteCommentsByCommentId } = require("./controllers/comments.controllers.js");
 
+const { getUsers} = require("./controllers/users.controllers.js");
 
 app.use(express.json());
 
@@ -29,6 +30,8 @@ app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
 app.patch('/api/articles/:article_id', patchArticleByArticleId);
 
 app.delete('/api/comments/:comment_id', deleteCommentsByCommentId);
+
+app.get('/api/users', getUsers);
 
 
 app.use((err, req, res, next) => {
