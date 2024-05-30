@@ -191,4 +191,47 @@ test("GET:400 Bad Requests- responds with an error message for an invalid articl
  
   });
 });
+
+const newComment = {
+   author :"butter_bridge",
+   body :"new data for post"
+};
+
+
+test("POST:201 create a new comment  and responds with new created data  ", () => {
+  return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(201)
+    .then(({ body }) => {
+      //console.log(body);
+        const {comment} = body
+   
+        expect(comment).toMatchObject({
+          comment_id: 19,
+          author: 'butter_bridge',
+          body :'new data for post',
+          votes :0,
+          created_at : expect.any(String),
+          article_id :1
+          
+        });
+     
+    
+      });  
   });
+
+  test("404 Not Found - response with an error message if the article does not exist in articles ", () => {
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe("Not Found");
+ 
+  });
+});
+
+
+});
