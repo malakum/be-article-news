@@ -137,3 +137,58 @@ describe("/api/articles", () => {
   });
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  test("GET:200 sends an array of comments of passed article_id to the client", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+           expect(comments.rows).toHaveLength(11);
+             comments.rows.forEach((comment) => {
+             expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: 1,
+          
+        });
+      });
+  });
+});
+
+test("200  - responds with an empty array  if the article does not have any comments ", () => {
+  return request(app)
+    .get("/api/articles/2/comments")
+    .expect(200)
+    .then(({ body }) => {
+        const {comments } = body;
+        expect(comments.rows).toEqual([]);
+
+});
+});
+test("GET:400 Bad Requests- responds with an error message for an invalid article id", () => {
+  return request(app)
+    .get("/api/articles/new_article/comments")
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+       expect(msg).toBe("Bad Request");
+   
+    });
+});
+ 
+  test("404 Not Found - response with an error message if the article does not exist in articles ", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+          const { msg } = body;
+          expect(msg).toBe("Not Found");
+ 
+  });
+});
+  });
