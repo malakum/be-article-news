@@ -9,23 +9,36 @@ exports.selectCommentsByArticleId = (article_id) => {
     
       return {rows};
     });
-    };
-        exports.createCommentsByArticleId = (article_id,newComment) => {
+          };
+
+
+  exports.createCommentsByArticleId = (article_id,newComment) => {
     
-         const { author, body} = newComment;
+    
+    return db.query(`SELECT  author,article_id 
+                      FROM articles WHERE article_id =$1 `,[article_id])
+    .then(({ rows }) => {
+       
+        if (!rows.length){
+            return Promise.reject({status:404 , msg: 'Not Found'})
+        }
+        const { author, body} = newComment;
         
-         const newCommentArr = [];
-         newCommentArr.push(author,body,article_id,0,'30-may-2024',);
+        const newCommentArr = [];
+        newCommentArr.push(author,body,article_id,0,'30-may-2024',);
 
-      const commentInsertQuery = format(`INSERT INTO comments(
-                                         author,body,article_id,votes,created_at)
-                                         VALUES %L RETURNING*`,[newCommentArr]);
+     const commentInsertQuery = format(`INSERT INTO comments(
+                                        author,body,article_id,votes,created_at)
+                                        VALUES %L RETURNING*`,[newCommentArr]);
 
-      return db.query(commentInsertQuery)
-        .then(({ rows }) => {
-  
-       return rows[0];
-     });
+     return db.query(commentInsertQuery)
+       .then(({ rows }) => {
+ 
+      return rows[0];
+    });
+     
+    });
+   
      };
      exports.deleteCommentRow = (comment_id) => {
       return db.query(`DELETE FROM comments WHERE comment_id =$1 RETURNING *`,[comment_id] )

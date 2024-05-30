@@ -2,8 +2,12 @@ const db = require("../db/connection");
 const format = require("pg-format");
 
 exports.selectArticleById = (article_id) => {
-     return db.query(`SELECT  author, title,article_id, body,topic,created_at,votes,article_img_url 
-                      FROM articles WHERE article_id =$1 `,[article_id])
+     return db.query(`SELECT  a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, a.article_img_url ,count(b.comment_id) AS comment_count
+                      FROM articles a LEFT JOIN comments b
+                       ON a.article_id = b.article_id
+                       WHERE a.article_id =$1 
+                       GROUP BY  a.article_id `,[article_id])
+                      
     .then(({ rows }) => {
        
         if (!rows.length){
