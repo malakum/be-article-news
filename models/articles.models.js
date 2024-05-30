@@ -14,14 +14,20 @@ exports.selectArticleById = (article_id) => {
     });
     };
 
-exports.selectArticles = (sort_by) => {
+exports.selectArticles = (topic,sort_by) => {
 
   const sortByArr = ["created_at"];
+  const queryValue =[];
 
   let sqlQuery = `SELECT  articles.*,
                   COUNT(comment_id) AS comment_count
                         FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
-                  GROUP BY articles.article_id `; 
+                  `; 
+  if (topic){
+    sqlQuery += ' WHERE topic = $1';
+    queryValue.push(topic);
+  }
+  sqlQuery += ' GROUP BY articles.article_id';
 
   if (sort_by && !sortByArr.includes(sort_by)){
                     return Promise.reject({status:400 , msg: 'Bad Request'})
@@ -31,7 +37,7 @@ exports.selectArticles = (sort_by) => {
                        sqlQuery += ` ORDER BY articles.${sort_by} desc`
                     }
      
-    return db.query(sqlQuery)           
+    return db.query(sqlQuery,queryValue)           
              .then(({ rows }) => {
               if (!rows.length){
                   return Promise.reject({status:404 , msg: 'Not Found'})
