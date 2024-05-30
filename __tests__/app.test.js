@@ -90,6 +90,9 @@ describe("/api/article/:article_id", () => {
       
       });
   });
+
+ 
+
 });
 describe("/api/articles", () => {
   test("GET:200 sends an array of articles to the client", () => {
@@ -204,7 +207,7 @@ test("POST:201 create a new comment  and responds with new created data  ", () =
     .send(newComment)
     .expect(201)
     .then(({ body }) => {
-      //console.log(body);
+    
         const {comment} = body
    
         expect(comment).toMatchObject({
@@ -233,5 +236,45 @@ test("POST:201 create a new comment  and responds with new created data  ", () =
   });
 });
 
+
+});
+describe("patch/api/article/:article_id", () => {
+const articleObj = { inc_votes: 2 };
+
+test("PATCH:200 Update an article of passed article id to the client", () => {
+return request(app)
+.patch("/api/articles/1")
+.send(articleObj)
+.expect(200)
+.then(({ body }) => {
+
+  const { article } = body;
+
+    expect(article).toMatchObject({
+      author: 'butter_bridge',
+      title: 'Living in the shadow of a great man',
+      article_id: 1,
+      body:  'I find this existence challenging',
+      topic: 'mitch',
+      created_at: '2020-07-09T20:11:00.000Z',
+       votes: 102,
+       article_img_url :'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      });
+ 
+});
+});
+test("GET:404 Not Found - response with an error message if the article does not exist", () => {
+  return request(app)
+    .patch("/api/articles/999")
+    .send(articleObj)
+    .expect(404)
+    .then(({ body }) => {
+    
+      const { msg } = body;
+    
+       expect(msg).toBe("Not Found");
+    
+    });
+});
 
 });
