@@ -311,3 +311,39 @@ describe("/api/users", () => {
       });
   });
 });
+describe("/api/articles", () => {
+  test("GET:200 sends an array of articles of selected topic to the client", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+          expect(articles.rows).toHaveLength(12);
+             articles.rows.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: 'mitch',
+            created_at: expect.any(String),
+             votes: expect.any(Number),
+             article_img_url :expect.any(String),
+             comment_count : expect.any(String),
+        });
+      });
+  });
+  });
+  test("GET:404 Not Found - response with an error message if the article does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=newtopic")
+      .expect(404)
+      .then(({ body }) => {
+      
+        const { msg } = body;
+      
+         expect(msg).toBe("Not Found");
+      
+      });
+  });
+  
+});
