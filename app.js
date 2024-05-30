@@ -8,7 +8,7 @@ const { getAllApi }= require("./controllers/allApi.controllers.js");
 
 const { getArticleById, getArticles,patchArticleByArticleId} = require("./controllers/articles.controllers.js");
 
-const { getCommentsByArticleId, postCommentsByArticleId, } = require("./controllers/comments.controllers.js");
+const { getCommentsByArticleId, postCommentsByArticleId, deleteCommentsByCommentId } = require("./controllers/comments.controllers.js");
 
 
 app.use(express.json());
@@ -27,6 +27,9 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 app.post('/api/articles/:article_id/comments', postCommentsByArticleId);
 
 app.patch('/api/articles/:article_id', patchArticleByArticleId);
+
+app.delete('/api/comments/:comment_id', deleteCommentsByCommentId);
+
 
 app.use((err, req, res, next) => {
     if (err.code === '22P02') {

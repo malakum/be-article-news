@@ -278,3 +278,15 @@ test("GET:404 Not Found - response with an error message if the article does not
 });
 
 });
+
+describe("/api/comments/:comment_id", () => {
+   test("DELETE:204 status 204 and no content.", () => {
+    return request(app)
+      .delete("/api/comments/19")
+      .expect(204)
+      .then(({ body }) => {
+        const  comment  = body;
+        expect(comment).toEqual({});
+      });
+  });
+});

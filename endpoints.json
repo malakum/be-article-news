@@ -92,5 +92,13 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/comment_id": {
+    "description": "serves Delete comment from comments  ",
+    "request":"19",
+    "queries": [],
+    "exampleResponse": {
+      "comments": []
+    }
   }
 }
