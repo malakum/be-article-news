@@ -23,9 +23,9 @@ exports.selectCommentsByArticleId = (article_id) => {
             return Promise.reject({status:404 , msg: 'Not Found'})
         }
         const { author, body} = newComment;
-        
+        const inputDate = new Date;
         const newCommentArr = [];
-        newCommentArr.push(author,body,article_id,0,'30-may-2024',);
+        newCommentArr.push(author,body,article_id,0,inputDate,);
 
      const commentInsertQuery = format(`INSERT INTO comments(
                                         author,body,article_id,votes,created_at)
