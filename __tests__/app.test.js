@@ -257,9 +257,73 @@ test("POST:201 create a new comment  and responds with new created data  ", () =
  
   });
 });
+test("GET:400 Bad Request - response with an error message if the article id is invalid type", () => {
+  return request(app)
+    .post("/api/articles/new_article/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({ body }) => {
+    
+      const { msg } = body;
+    
+       expect(msg).toBe("Bad Request");
+    
+    });
+});
 
+const newCommentWithoutBody = {author :"butter_bridge"};
+
+test("GET:400 Bad Request - response with an error message if body does not exist in request body", () => {
+  return request(app)
+    .post("/api/articles/1/comments")
+    .send(newCommentWithoutBody)
+    .expect(400)
+    .then(({ body }) => {
+    
+      const { msg } = body;
+    
+       expect(msg).toBe("Bad Request");
+    
+    });
+});
+const newCommentWithoutAuthor = {body :"new comment"};
+
+test("GET:400 Bad Request - response with an error message if author does not exits in request body ", () => {
+  return request(app)
+    .post("/api/articles/1/comments")
+    .send(newCommentWithoutAuthor)
+    .expect(400)
+    .then(({ body }) => {
+    
+      const { msg } = body;
+    
+       expect(msg).toBe("Bad Request");
+    
+    });
+});
+
+const newCommentNotauthor = {
+  author :"new_user",
+  body :"new data for post"
+};
+
+test("GET:400 Bad Request - response with an error message if author does not exist in topics table ", () => {
+  return request(app)
+    .post("/api/articles/1/comments")
+    .send(newCommentNotauthor)
+    .expect(404)
+    .then(({ body }) => {
+    
+      const { msg } = body;
+    
+       expect(msg).toBe("Not Found");
+    
+    });
+});
 
 });
+
+
 describe("patch/api/article/:article_id", () => {
 const articleObj = { inc_votes: 2 };
 
@@ -298,7 +362,7 @@ test("GET:404 Not Found - response with an error message if the article does not
     
     });
 });
-test("GET:400 Bad Request - response with an error message if the article does not exist", () => {
+test("GET:400 Bad Request - response with an error message if the articleid is invalid datatype ", () => {
   return request(app)
     .patch("/api/articles/new_article")
     .send(articleObj)
@@ -313,7 +377,7 @@ test("GET:400 Bad Request - response with an error message if the article does n
 });
 
 const badArticleObj = { inc_votes : 'one'};
-test("GET:400 Bad Request - response with an error message if the article does not exist", () => {
+test("GET:400 Bad Request - response with an error message if the request body has invalid data type of votes", () => {
   return request(app)
     .patch("/api/articles/1")
     .send(badArticleObj)
