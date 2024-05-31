@@ -63,6 +63,27 @@ describe("/api/article/:article_id", () => {
             topic: 'mitch',
             created_at: '2020-07-09T20:11:00.000Z',
              votes: 100,
+             article_img_url :'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+             });
+       
+      });
+  });
+  test("GET:200 sends an article along with comment count of passed article id to the client", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+     
+        const { article } = body;
+      
+          expect(article).toMatchObject({
+            author: 'butter_bridge',
+            title: 'Living in the shadow of a great man',
+            article_id: 1,
+            body:  'I find this existence challenging',
+            topic: 'mitch',
+            created_at: '2020-07-09T20:11:00.000Z',
+             votes: 100,
              article_img_url :'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
              comment_count : '11',
             });
@@ -277,6 +298,35 @@ test("GET:404 Not Found - response with an error message if the article does not
     
     });
 });
+test("GET:400 Bad Request - response with an error message if the article does not exist", () => {
+  return request(app)
+    .patch("/api/articles/new_article")
+    .send(articleObj)
+    .expect(400)
+    .then(({ body }) => {
+    
+      const { msg } = body;
+    
+       expect(msg).toBe("Bad Request");
+    
+    });
+});
+
+const badArticleObj = { inc_votes : 'one'};
+test("GET:400 Bad Request - response with an error message if the article does not exist", () => {
+  return request(app)
+    .patch("/api/articles/1")
+    .send(badArticleObj)
+    .expect(400)
+    .then(({ body }) => {
+    
+      const { msg } = body;
+    
+       expect(msg).toBe("Bad Request");
+    
+    });
+});
+
 
 });
 

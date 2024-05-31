@@ -21,6 +21,7 @@ exports.selectArticles = (topic,sort_by) => {
   const sortByArr = ["created_at"];
   const queryValue =[];
 
+  
   let sqlQuery = `SELECT  articles.*,
                   COUNT(comment_id) AS comment_count
                         FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
@@ -57,15 +58,16 @@ exports.updateArticleByArticleId =(article_id, inc_votes)=>{
       }
     
        const {votes} = rows[0];
+      
+       if (typeof inc_votes !='number'){
+        return Promise.reject({status:400 , msg: 'Bad Request'})
+       }
      
-       const actualVotes = votes+inc_votes;
-    
-       const updateData = format(`UPDATE articles SET votes = ${actualVotes}
-                           WHERE article_id = ${article_id} RETURNING*;`, [actualVotes, article_id]);
+       const updateData = format(`UPDATE articles SET votes = votes+ ${inc_votes}
+                           WHERE article_id = ${article_id} RETURNING*;`);
 
                      
-
-      return db.query(updateData)
+          return db.query(updateData)
         .then(({ rows }) => {
          return rows[0];
      });
