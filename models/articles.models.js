@@ -26,6 +26,9 @@ exports.selectArticles = (topic,sort_by) => {
                   COUNT(comment_id) AS comment_count
                         FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
                   `; 
+  // if (topic)     {
+  //   const topicQuery = db.query(`SELECT * FR`)
+  // }           
   if (topic){
     sqlQuery += ' WHERE topic = $1';
     queryValue.push(topic);

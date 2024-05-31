@@ -39,7 +39,7 @@ exports.selectCommentsByArticleId = (article_id) => {
        .then(({ rows }) => {
  
       return rows[0];
-    }).catch((error )=>{return Promise.reject({status:404 , msg :'Not Found'})});
+      }).catch((error )=>{return Promise.reject({status:404 , msg :'Not Found'})});
      
     });
    
