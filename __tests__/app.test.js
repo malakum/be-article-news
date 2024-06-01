@@ -450,6 +450,18 @@ describe("/api/articles", () => {
   });
   test("GET:404 Not Found - response with an error message if the article does not exist", () => {
     return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const {articles } = body;
+       
+        expect(articles.rows).toEqual([]);
+     
+      
+      });
+  });
+  test("GET:404 Not Found - response with an error message if the article does not exist", () => {
+    return request(app)
       .get("/api/articles?topic=newtopic")
       .expect(404)
       .then(({ body }) => {

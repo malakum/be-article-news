@@ -1,39 +1,60 @@
-const { selectArticleById } = require("../models/articles.models");
+const {  checkArticleById } = require("../models/articles.models");
+const { checkUserByAuthor} = require("../models/users.models");
 const { selectCommentsByArticleId,  createCommentsByArticleId ,deleteCommentRow} = require("../models/comments.models")
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const {article_id} = req.params;
-    const promises = [selectCommentsByArticleId(article_id)];
+    return checkArticleById(article_id).then((articleExist)=>{
+    
+         if (articleExist && articleExist.length >0) {
+            return selectCommentsByArticleId(article_id).then((comments)=>{
+                res.status(200).send({comments});
+            })
+            }
+        else {
+            return Promise.reject({ status: 404, msg: "Not Found" })
+        }
+         }).catch(next)
+    };
 
-    if (article_id){
-        promises.push(selectArticleById(article_id));
-    }
-
-    Promise.all(promises)
-           .then ((resolvedPromises) =>{
-            const comments =resolvedPromises[0];
-            res.status(200).send({comments});
-           }).catch(next);
-  
-};
 
 exports.postCommentsByArticleId = (req, res, next) => {
     const {article_id} = req.params;
-    const newComment = req.body;
    
+    const newComment = req.body;
+    const { author, body} = newComment;
+   
+    if (!author || !body){
+     
+       res.status(400).send({msg :'Bad Request'});
+             
+      }
+    else {
+ 
+     checkArticleById(article_id).then((articleExist)=>{
+    if (articleExist && articleExist.length >0) {
+         checkUserByAuthor(author).then((authorExist)=>{
+        
+            if (authorExist && authorExist.length >0){
+         
+                createCommentsByArticleId(article_id,newComment).then((comment)=>{
+               res.status(201).send({comment});
+               }).catch(next);
+            }
+            else {
+        
+                return Promise.reject({ status: 404, msg: "Not Found" })  
+            }
+        }).catch(next);
+    }
+    else {
+     
+        return Promise.reject({ status: 404, msg: "Not Found" })
+    }
+     }).catch(next);
+    }
+};
 
-    createCommentsByArticleId(article_id,newComment).then((comment)=>{
-        res.status(201).send({comment});
-    }).catch(next);
-    };
-
-exports.getArticles = (req, res, next) => {
-    const {sort_by} = req.query;
-    
-  selectArticles(sort_by).then((articles) => {  
-     res.status(200).send({articles});
-    }).catch(next);
-  };
 exports.deleteCommentsByCommentId =(req,res,next) =>{
     const {comment_id} = req.params;
     deleteCommentRow(comment_id).then((comment) =>{

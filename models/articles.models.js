@@ -1,6 +1,15 @@
 const db = require("../db/connection");
 const format = require("pg-format");
 
+exports.checkArticleById =(article_id) =>{ 
+      return db.query(`SELECT article_id,author FROM articles WHERE article_id =$1`,[article_id])
+              .then (({rows}) =>{ 
+              
+                if (!rows.length){
+                  return Promise.reject({status:404 , msg: 'Not Found'})
+              }
+              return rows})};
+
 exports.selectArticleById = (article_id) => {
      return db.query(`SELECT  a.author, a.title, a.article_id, a.body, a.topic, a.created_at, a.votes, a.article_img_url ,count(b.comment_id) AS comment_count
                       FROM articles a LEFT JOIN comments b
@@ -21,14 +30,11 @@ exports.selectArticles = (topic,sort_by) => {
   const sortByArr = ["created_at"];
   const queryValue =[];
 
-  
   let sqlQuery = `SELECT  articles.*,
                   COUNT(comment_id) AS comment_count
                         FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
                   `; 
-  // if (topic)     {
-  //   const topicQuery = db.query(`SELECT * FR`)
-  // }           
+  
   if (topic){
     sqlQuery += ' WHERE topic = $1';
     queryValue.push(topic);
@@ -45,9 +51,7 @@ exports.selectArticles = (topic,sort_by) => {
      
     return db.query(sqlQuery,queryValue)           
              .then(({ rows }) => {
-              if (!rows.length){
-                  return Promise.reject({status:404 , msg: 'Not Found'})
-                 }
+  
              return {rows};
              });
      };

@@ -1,4 +1,5 @@
-const { selectArticleById , selectArticles, updateArticleByArticleId } = require("../models/articles.models")
+const { selectArticleById , selectArticles, updateArticleByArticleId } = require("../models/articles.models");
+const { checkTopic } = require("../models/topics.models");
 
 exports.getArticleById = (req, res, next) => {
       const {article_id} = req.params;
@@ -13,8 +14,21 @@ exports.getArticles = (req, res, next) => {
 
   
 selectArticles(topic,sort_by).then((articles) => {  
+ 
+  if (topic && articles.rows.length===0){
+    return checkTopic(topic).then((topicData)=>{
+      if (topicData.length>0)
+        res.status(200).send({articles});
+      
+      else{
+        return Promise.reject({status:404, msg :'Not Found'});
+      }
+    }).catch(next)
+    }
+  
    res.status(200).send({articles});
   }).catch(next);
+
 };
 
 exports.patchArticleByArticleId = (req, res, next) => {
