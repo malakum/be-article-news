@@ -9,7 +9,6 @@ const request = require("supertest");
 const allApiDataOutput = require("../endpoints.json");
 
 
-
 beforeEach(() => seed({ topicData, articleData, userData, commentData }));
 afterAll(() => db.end());
 
