@@ -27,7 +27,7 @@ exports.selectArticleById = (article_id) => {
 
 exports.selectArticles = (topic,sort_by) => {
 
-  const sortByArr = ["created_at"];
+  const sortByArr = ["created_at","votes"];
   const queryValue =[];
 
   let sqlQuery = `SELECT  articles.*,
