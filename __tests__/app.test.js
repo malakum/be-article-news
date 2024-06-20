@@ -149,6 +149,17 @@ describe("/api/articles", () => {
 
   });
   });
+  test("GET:200 sends an array of articles in descending order by comment count to the client", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+           expect(articles.rows).toHaveLength(13);
+     
+
+  });
+  });
   test("GET:400 Bad Requests- response with an error message for an invalid sort_by", () => {
     return request(app)
       .get("/api/articles?sort_by= apple")

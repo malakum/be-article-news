@@ -27,7 +27,7 @@ exports.selectArticleById = (article_id) => {
 
 exports.selectArticles = (topic,sort_by) => {
 
-  const sortByArr = ["created_at","votes"];
+  const sortByArr = ["created_at","votes","comment_count"];
   const queryValue =[];
 
   let sqlQuery = `SELECT  articles.*,
@@ -46,7 +46,11 @@ exports.selectArticles = (topic,sort_by) => {
                }
 
   if (sort_by && sortByArr.includes(sort_by)){
-                       sqlQuery += ` ORDER BY articles.${sort_by} desc`
+    if (sort_by==="comment_count"){
+      //  sqlQuery += ` ORDER BY ${sort_by} desc`
+      sqlQuery += ` ORDER BY comment_count desc`
+    }
+    else{ sqlQuery += ` ORDER BY articles.${sort_by} desc`}  
                     }
      
     return db.query(sqlQuery,queryValue)           
